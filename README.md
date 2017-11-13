@@ -1,2 +1,3 @@
-# devman_tasks
-devman.org tasks 
+# Обучение Python 
+
+Некоторые задачи, написанные на Python для обучения, собственно, питону, в рамках курса https://devman.org
