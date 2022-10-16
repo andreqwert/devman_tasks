@@ -90,7 +90,7 @@ def create_commendations(schoolkid, subject):
      except ObjectDoesNotExist:
           print('Такого ученика не существует.')
      except MultipleObjectsReturned:
-          print(f'Введите более конкретное ФИО ученика. Например, с отчеством.')
+          print('Введите более конкретное ФИО ученика. Например, с отчеством.')
      except IntegrityError:
           print('Неверно указано название предмета. Укажите корректное название предмета.')
 
