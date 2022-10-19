@@ -71,7 +71,9 @@ def fix_marks(schoolkid):
           print(f'Введите более конкретное ФИО ученика. Например, с отчеством.')
 
 
-def create_commendations(schoolkid, subject, year_of_study=6, group_letter='А'):
+def create_commendations(schoolkid, subject, year_of_study=6, group_letter='А', 
+                         review_start_date='2018-10-02', review_finish_date='2018-12-03',
+                         commendation_exprs_path='./datacenter/commendation_expressions.txt'):
      """Создать похвалу для ученика"""
 
      try:
@@ -79,8 +81,8 @@ def create_commendations(schoolkid, subject, year_of_study=6, group_letter='А')
           lesson = Lesson.objects.filter(year_of_study=year_of_study, group_letter=group_letter, subject__title=subject).first()
           teacher_name = Teacher.objects.filter(lesson=lesson).first()
           subject_name = Subject.objects.filter(title__contains=subject).first()
-          Commendation.objects.create(text=random.choice(get_commendation_expressions('./datacenter/commendation_expressions.txt')),
-                                      created=random.choice(get_days_between_dates('2018-10-02', '2018-12-03')), 
+          Commendation.objects.create(text=random.choice(get_commendation_expressions(commendation_exprs_path)),
+                                      created=random.choice(get_days_between_dates(review_start_date, review_finish_date)), 
                                       teacher=teacher_name, schoolkid=child_name, subject=subject_name)
           print('Похвала добавлена!')
      except ObjectDoesNotExist:
