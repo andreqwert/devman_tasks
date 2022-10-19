@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from datacenter.models import Schoolkid, Teacher, Subject, Lesson, Mark, Chastisement, Commendation
-
+from functools import partial
 
 
 def get_days_between_dates(date1, date2):
@@ -36,7 +36,7 @@ def remove_chastisements(schoolkid):
 
      try:
           child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
-          child_chastisements= Chastisement.objects.filter(schoolkid=child_name)
+          child_chastisements = Chastisement.objects.filter(schoolkid=child_name)
           child_chastisements.delete()
           print('Жалобы удалены!')
      except ObjectDoesNotExist:
@@ -50,7 +50,7 @@ def remove_commendations(schoolkid):
 
      try:
           child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
-          child_commendations= Commendation.objects.filter(schoolkid=child_name)
+          child_commendations = Commendation.objects.filter(schoolkid=child_name)
           child_commendations.delete()
           print('Похвала стёрта!')
      except ObjectDoesNotExist:
@@ -64,10 +64,7 @@ def fix_marks(schoolkid):
 
      try:
           child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
-          bad_marks = Mark.objects.filter(schoolkid=child_name, points__lte=3)
-          for mark in bad_marks:
-               mark.points = 5
-               mark.save()
+          bad_marks = Mark.objects.filter(schoolkid=child_name, points__lte=3).update(points=5)
           print('Оценки исправлены!')
      except ObjectDoesNotExist:
           print('Такого ученика не существует.')
@@ -75,12 +72,12 @@ def fix_marks(schoolkid):
           print(f'Введите более конкретное ФИО ученика. Например, с отчеством.')
 
 
-def create_commendations(schoolkid, subject):
+def create_commendations(schoolkid, subject, year_of_study=6, group_letter='А'):
      """Создать похвалу для ученика"""
 
      try:
           child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
-          lesson = Lesson.objects.filter(year_of_study=6, group_letter='А', subject__title=subject).first()
+          lesson = Lesson.objects.filter(year_of_study=year_of_study, group_letter=group_letter, subject__title=subject).first()
           teacher_name = Teacher.objects.filter(lesson=lesson).first()
           subject_name = Subject.objects.filter(title__contains=subject).first()
           Commendation.objects.create(text=random.choice(get_commendation_expressions('./datacenter/commendation_expressions.txt')),
@@ -90,7 +87,7 @@ def create_commendations(schoolkid, subject):
      except ObjectDoesNotExist:
           print('Такого ученика не существует.')
      except MultipleObjectsReturned:
-          print('Введите более конкретное ФИО ученика. Например, с отчеством.')
+          print(f'Введите более конкретное ФИО ученика. Например, с отчеством.')
      except IntegrityError:
           print('Неверно указано название предмета. Укажите корректное название предмета.')
 
