@@ -4,7 +4,6 @@ from datetime import date, timedelta
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from datacenter.models import Schoolkid, Teacher, Subject, Lesson, Mark, Chastisement, Commendation
-from functools import partial
 
 
 def get_days_between_dates(date1, date2):
