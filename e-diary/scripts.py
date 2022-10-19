@@ -96,3 +96,5 @@ def create_commendations(schoolkid, subject, year_of_study=6, group_letter='А',
 
 
 
+
+
