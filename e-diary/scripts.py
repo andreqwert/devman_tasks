@@ -34,7 +34,7 @@ def remove_chastisements(schoolkid):
      """Удалить все жалобы учителей"""
 
      try:
-          child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
+          child_name = Schoolkid.objects.get(full_name__contains=schoolkid)
           child_chastisements = Chastisement.objects.filter(schoolkid=child_name)
           child_chastisements.delete()
           print('Жалобы удалены!')
@@ -48,7 +48,7 @@ def remove_commendations(schoolkid):
      """Удалить всю похвалу ученика"""
 
      try:
-          child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
+          child_name = Schoolkid.objects.get(full_name__contains=schoolkid)
           child_commendations = Commendation.objects.filter(schoolkid=child_name)
           child_commendations.delete()
           print('Похвала стёрта!')
@@ -62,7 +62,7 @@ def fix_marks(schoolkid):
      """Исправляем все оценки ниже либо равные тройке - на пятёрки"""
 
      try:
-          child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
+          child_name = Schoolkid.objects.get(full_name__contains=schoolkid)
           bad_marks = Mark.objects.filter(schoolkid=child_name, points__lte=3).update(points=5)
           print('Оценки исправлены!')
      except ObjectDoesNotExist:
@@ -71,14 +71,14 @@ def fix_marks(schoolkid):
           print(f'Введите более конкретное ФИО ученика. Например, с отчеством.')
 
 
-def create_commendations(schoolkid, subject, year_of_study=6, group_letter='А', 
-                         review_start_date='2018-10-02', review_finish_date='2018-12-03',
+def create_commendations(schoolkid, subject, review_start_date='2018-10-02', review_finish_date='2018-12-03',
                          commendation_exprs_path='./datacenter/commendation_expressions.txt'):
      """Создать похвалу для ученика"""
 
      try:
-          child_name = Schoolkid.objects.filter(full_name__contains=schoolkid).get()
-          lesson = Lesson.objects.filter(year_of_study=year_of_study, group_letter=group_letter, subject__title=subject).first()
+          child_name = Schoolkid.objects.get(full_name__contains=schoolkid)
+          lesson = Lesson.objects.filter(year_of_study=child_name.year_of_study, group_letter=child_name.group_letter, 
+                                         subject__title=subject).first()
           teacher_name = Teacher.objects.filter(lesson=lesson).first()
           subject_name = Subject.objects.filter(title__contains=subject).first()
           Commendation.objects.create(text=random.choice(get_commendation_expressions(commendation_exprs_path)),
